@@ -1,0 +1,327 @@
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+## Ranking the Harmfulness of Severe Weather Events in the U.S.
+
+### Synopsis
+
+In this analysis, two questions are to be answered for the United States. The 
+first question is which types of severe weather events are most harmful with 
+respect to public health. The other question is which types of severe weather 
+events have the greatest economic consequences. The data to be analysed is from 
+the U.S. National Oceanic and Atmospheric Administration (NOAA) database and 
+contains the events across the United States from 1950 to 2011. As a result of 
+the data analysis, it has been hypothesized that tornado, excessive heat, heat 
+and flash flood are the most harmful events to the public health. The other 
+hypothesis is that flood, hurricane(typhoon), tornado and storm surge are the most 
+harmful evens to the public wealth.
+
+### Data Processing
+
+The analysis data can be obtained from the [storm data][1] in the form of a bzip2
+file. The preparation of the data is explained in the [storm data documentation][2].
+In addition, there is a document of [frequently asked questions][3] about the 
+data.
+
+#### Importing the Raw Data
+
+The data is stored in a comma separated file and the missing values are 
+represented by blank fields. The storm data is imported. 
+
+```{r import_data}
+if (!file.exists("StormData.csv")){
+      the_url <- "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2"
+      download.file(the_url, "StormData.csv.bz2")
+      the_command <- "bzip2 -d StormData.csv.bz2"
+      system(the_command)
+}
+library(data.table) # load data.table package
+library(dplyr) # load dplyr package
+# read in data treating "" as NA
+data <- fread("StormData.csv", data.table = FALSE, na.strings = "")
+# remove duplicate rows in data
+data <- distinct(data)
+```
+
+#### Processing the Raw Data
+
+After the data is imported, the first few and last few lines of the data are 
+displayed.
+
+```{r glance_data}
+head(data)
+tail(data)
+```
+
+A column of the data contains unusually long entries. It is the REMARKS column 
+to the left of the REFNUM column. The columns that are of interest are EVTYPE, 
+FATALITIES, INJURIES, PROPDMG, PROPDMGEXP, CROPDMG, CROPDMGEXP. EVTYPE is the 
+type of the event. FATALITIES stores the number of the dead people. INJURIES 
+gives the number of injured people. PROPDMG is the base part of the property 
+damage in terms of dollars. PROPDMGEXP is the exponent part of the property 
+damage. CROPDMG and CROPDMGEXP are similar to PROPDMG and PROPDMGEXP with the 
+difference that they are for crop damages. The columns that are related with 
+the analysis are selected and renamed, the rest are discarded.
+
+```{r narrow_data}
+data <- select(data, STATE = STATE__, COUNTY, EVTYPE, FATALITIES, INJURIES, 
+               PROPDMG, PROPDMGEXP, CROPDMG, CROPDMGEXP)
+```
+
+The proportion of NA's is determined.
+
+```{r prop_of_na}
+prop_na <- function(x){round(mean(is.na(x)), 2)}
+na_table <- sapply(data, prop_na)
+print(na_table)
+```
+
+The unique values for PROPDMGEXP and CROPDMGEXP are as follows:
+
+```{r dmg_exp}
+print(unique(data$PROPDMGEXP))
+print(unique(data$CROPDMGEXP))
+```
+
+In the storm data preparation manual, it is stated that alphabetical characters 
+are used to indicate the magnitude of the damage. They are "K" for thousands, "M" 
+for millions and "B" for billions. Hence, the characters in the PROPDMGEXP and 
+CROPDMGEXP will be interpreted accordingly. If the exponent character is either 
+of "K/k" or "M/m" or "B/b", the damage is multiplied by a thousand or a million or 
+a billion, respectively. If the exponent character is a digit, then the magnitude 
+is multiplied by 10 to the power being equal to the digit. For all the other 
+cases, including NA's, the exponent character has no effect. Hence, the proportions 
+of the NA's for PROPDMGEXP and CROPDMGEXP are not important. However, this 
+transformation is an approximation to the damage because in the REMARKS column, 
+there are some entries giving the amount of damage depending on reports of various 
+sources. These damage reports in the REMARKS column are neglected. 
+
+The approximate total damage is calculated and added as a new column to the data.
+
+```{r total_damage}
+# function to convert exponent characters to numeric characters
+exponent <- function(x){
+      if (x %in% c("K", "k")){
+            x = "3"
+      } else if (x %in% c("M", "m")){
+            x = "6"
+      } else if (x %in% c("B", "b")){
+            x = "9"
+      } else if (x %in% c("+", "?", "h", "H", "-")){
+            x = "0"
+      } else if (is.na(x)){
+            x = "0"
+      } else {
+            x = x
+      }
+      x
+}
+# convert property exponent characters to numeric characters
+data$PROPDMGEXP <- sapply(data$PROPDMGEXP, exponent)
+# convert crop exponent characters to numeric characters
+data$CROPDMGEXP <- sapply(data$CROPDMGEXP, exponent)
+data$PROPDMGEXP <- as.numeric(data$PROPDMGEXP)
+data$CROPDMGEXP <- as.numeric(data$CROPDMGEXP)
+data <- data %>%
+      # compute the property damage and crop damage
+      mutate(PROPDMG = PROPDMG * (10 ^ PROPDMGEXP), 
+             CROPDMG = CROPDMG * (10 ^ CROPDMGEXP)) %>%
+      # discard PROPDMGEXP and CROPDMGEXP columns
+      select(STATE, COUNTY, EVTYPE, FATALITIES, INJURIES, 
+             PROPDMG, CROPDMG) %>%
+      as.data.frame()
+# remove extra blanks in the event type names
+data$EVTYPE <- trimws(data$EVTYPE)
+# convert event type names to lower case
+data$EVTYPE <- tolower(data$EVTYPE)
+# get the distinct event type names
+data_ev_types <- unique(data$EVTYPE)
+```
+
+Let the number of unique event types be determined.
+
+```{r unique_events}
+num_event_types <- length(data_ev_types)
+```
+
+The number of distinct event types is `r num_event_types`. That is a huge number. 
+Let the event types given in the storm manual be checked. They are as follows:
+
+```{r def_event_types}
+default_event_types <- c("Astronomical Low Tide", "Avalanche", "Blizzard", 
+                         "Coastal Flood", "Cold/Wind Chill", "Debris Flow",
+                         "Dense Fog", "Dense Smoke", "Drought", "Dust Devil",
+                         "Dust Storm", "Excessive Heat", "Extreme Cold/Wind Chill",
+                         "Flash Flood", "Flood", "Frost/Freeze", "Funnel Cloud",
+                         "Freezing Fog", "Hail", "Heat", "Heavy Rain", "Heavy Snow",
+                         "High Surf", "High Wind", "Hurricane (Typhoon)", "Ice Storm",
+                         "Lake-Effect Snow", "Lakeshore Flood", "Lightning", 
+                         "Marine Hail", "Marine High Wind", "Marine Strong Wind",
+                         "Marine Thunderstorm Wind", "Rip Current", "Seiche", 
+                         "Sleet", "Storm Surge/Tide", "Strong Wind", 
+                         "Thunderstorm Wind", "Tornado", "Tropical Depression",
+                         "Tropical Storm", "Tsunami", "Volcanic Ash", "Waterspout",
+                         "Wildfire", "Winter Storm", "Winter Weather")
+print(default_event_types)
+```
+There are `r length(default_event_types)` default event types. The number of event
+types in the data set is `r num_event_types`. They are very different from each 
+other. This difference indicates that there are event type names in the data set 
+which are different from the default event type names. Hence, the ranking of the 
+event types will be made according to two data sets. First data set is the original 
+data set. The second data set will be obtained from the original one by processing 
+the event type names in such a way that they are similar to the default event 
+type names. Let the default event types and the event types in the data set be 
+matched.
+
+```{r process_ev_type}
+# default event types are converted to lower case
+default_event_types <- tolower(default_event_types)
+# "/" character and extra blanks are removed from the default event type names
+default_event_types_trimmed <- trimws(gsub("/", " ", default_event_types))
+# default event type names are splitted and combined to form the set of default
+# type keywords
+default_keywords <- unique(unlist(strsplit(default_event_types_trimmed, " ",
+                                           fixed = TRUE)))
+# "(" character is removed from the default keywords
+default_keywords <- gsub("\\(", "", default_keywords)
+# ")" character is removed from the default keywords
+default_keywords <- gsub("\\)", "", default_keywords)
+
+# clone the original data set
+data_modif <- data
+
+# remove the "/" character from the event type names
+data_modif$EVTYPE <- gsub("/", " ", data_modif$EVTYPE)
+# convert "tstm" to thunderstorm in the event type names
+data_modif$EVTYPE <- gsub("tstm", "thunderstorm", data_modif$EVTYPE)
+# remove the extra blank spaces in the event type names
+data_modif$EVTYPE <- trimws(data_modif$EVTYPE)
+
+# split the event type names into words
+splitted_names <- strsplit(data_modif$EVTYPE, " ")
+
+# take the intersection of the splitted names with the default keywords to 
+# obtain a name more similar to the default type name
+edit_type <- function(x){
+      paste(dplyr::intersect(x, default_keywords), collapse = " ")
+}
+
+# obtain the names similar to the default event type names
+similar_names <- sapply(splitted_names, edit_type)
+# update the event type names
+data_modif$EVTYPE <- similar_names
+```
+
+The processing of the raw data has been completed.
+
+### Results
+
+The processed data is to be analysed to determine which types of severe weather 
+events are most harmful with respect to public health and which types of severe 
+weather events have the greatest economic consequences. The analyses will be 
+performed for the original data set and the data set with the modified event type 
+names.
+
+#### Damage to the Public Health
+
+The effect of the events to the public health is to be determined first. The total 
+number of deaths and injuries will be found and the events will be ordered with 
+respect to death first and injuries second.
+
+```{r public_health_orig_data}
+# using the original data set, total fatalities and injuries are computed and 
+# data is ordered with respect to decreasing fatalities and injuries
+health <- data %>% group_by(EVTYPE) %>% 
+      summarise(fatalities = sum(FATALITIES), injuries = sum(INJURIES)) %>%
+      arrange(desc(fatalities), desc(injuries)) %>%
+      as.data.frame()
+head(health, n = 10)
+```
+
+The data set with the modified event names is also processed to determine the 
+events which are most harmful to the public health.
+
+```{r public_health_modif_data}
+# using the modified data set, total fatalities and injuries are computed and 
+# data is ordered with respect to decreasing fatalities and injuries
+health <- data_modif %>% group_by(EVTYPE) %>% 
+      summarise(fatalities = sum(FATALITIES), injuries = sum(INJURIES)) %>%
+      arrange(desc(fatalities), desc(injuries)) %>%
+      as.data.frame()
+head(health, n = 10)
+```
+
+From these two results, it is hypothesized that tornado, excessive heat, heat 
+and flash flood are the most harmful events to the public health although the 
+orders of the heat and flash flood are interchanged in the original data set and 
+the modified data set.
+
+The events most harmful to the public health are plotted.
+
+```{r health_harm_plot}
+library(ggplot2) # load the package ggplot2
+health <- health[1:10, ] # first ten rows are selected
+# order the bars with respect to decreasing fatalities 
+p <- ggplot(health, aes(x = reorder(EVTYPE, -fatalities), y = fatalities))
+p <- p + geom_bar(stat = "identity")
+x_label <- "event type" # x axis label
+the_caption <- "Fig.1 Events which are most harmful to the public health"
+p <- p + labs(x = x_label, caption = the_caption)
+# x axis tick labels are made vertical due to space restrictions
+p <- p + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+p
+```
+
+#### Damage to the Public Wealth
+
+The damage of the events to the public wealth is to be examined. The total 
+expense of the property and the crop damages will be computed and arranged in a 
+decresing order.
+
+```{r public_wealth_orig_data}
+# using the original data set, total wealth damage is computed and 
+# data is ordered with respect to decreasing wealth damage
+wealth <- data %>% group_by(EVTYPE) %>% 
+      summarise(wealth_damage = sum(PROPDMG) + sum(CROPDMG)) %>%
+      arrange(desc(wealth_damage)) %>%
+      as.data.frame()
+head(wealth, n = 10)
+```
+
+The same examination is to be carried out for the data set with the modified 
+event type names.
+
+```{r public_wealth_modif_data}
+# using the modified data set, total wealth damage is computed and 
+# data is ordered with respect to decreasing wealth damage
+wealth <- data_modif %>% group_by(EVTYPE) %>% 
+      summarise(wealth_damage = sum(PROPDMG) + sum(CROPDMG)) %>%
+      arrange(desc(wealth_damage)) %>%
+      as.data.frame()
+head(wealth, n = 10)
+```
+
+From these two results, it is hypothesized that flood, hurricane(typhoon), 
+tornado and storm surge are the most harmful evens to the public wealth.
+
+The events most harmful to the public wealth are plotted.
+
+```{r wealth_harm_plot}
+wealth <- wealth[1:10, ] # first ten rows are selected
+# order the bars with respect to decreasing wealth damage
+p <- ggplot(wealth, aes(x = reorder(EVTYPE, -wealth_damage), y = wealth_damage))
+p <- p + geom_bar(stat = "identity")
+x_label <- "event type" # x axis label
+y_label <- "wealth damage" # y axis label
+the_caption <- "Fig.2 Events which are most harmful to the public wealth"
+p <- p + labs(x = x_label, y = y_label, caption = the_caption)
+# x axis tick labels are made vertical due to space restrictions
+p <- p + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+p
+```
+
+[1]: https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2 "storm data"
+[2]: https://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2Fpd01016005curr.pdf "storm data documentation"
+[3]: https://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2FNCDC%20Storm%20Events-FAQ%20Page.pdf "frequently asked questions"
