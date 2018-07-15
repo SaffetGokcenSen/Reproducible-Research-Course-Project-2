@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+<title>Ranking the Harmfulness of Severe Weather Events in the U.S.</title>
+
+<script type="text/javascript">
+window.onload = function() {
+  var imgs = document.getElementsByTagName('img'), i, img;
+  for (i = 0; i < imgs.length; i++) {
+    img = imgs[i];
+    // center an image if it is the only element of its parent
+    if (img.parentElement.childElementCount === 1)
+      img.parentElement.style.textAlign = 'center';
+  }
+};
+</script>
+
+<!-- Styles for R syntax highlighter -->
+<style type="text/css">
+   pre .operator,
+   pre .paren {
+     color: rgb(104, 118, 135)
+   }
+
+   pre .literal {
+     color: #990073
+   }
+
+   pre .number {
+     color: #099;
+   }
+
+   pre .comment {
+     color: #998;
+     font-style: italic
+   }
+
+   pre .keyword {
+     color: #900;
+     font-weight: bold
+   }
+
+   pre .identifier {
+     color: rgb(0, 0, 0);
+   }
+
+   pre .string {
+     color: #d14;
+   }
+</style>
+
+<!-- R syntax highlighter -->
+<script type="text/javascript">
+var hljs=new function(){function m(p){return p.replace(/&/gm,"&amp;").replace(/</gm,"&lt;")}function f(r,q,p){return RegExp(q,"m"+(r.cI?"i":"")+(p?"g":""))}function b(r){for(var p=0;p<r.childNodes.length;p++){var q=r.childNodes[p];if(q.nodeName=="CODE"){return q}if(!(q.nodeType==3&&q.nodeValue.match(/\s+/))){break}}}function h(t,s){var p="";for(var r=0;r<t.childNodes.length;r++){if(t.childNodes[r].nodeType==3){var q=t.childNodes[r].nodeValue;if(s){q=q.replace(/\n/g,"")}p+=q}else{if(t.childNodes[r].nodeName=="BR"){p+="\n"}else{p+=h(t.childNodes[r])}}}if(/MSIE [678]/.test(navigator.userAgent)){p=p.replace(/\r/g,"\n")}return p}function a(s){var r=s.className.split(/\s+/);r=r.concat(s.parentNode.className.split(/\s+/));for(var q=0;q<r.length;q++){var p=r[q].replace(/^language-/,"");if(e[p]){return p}}}function c(q){var p=[];(function(s,t){for(var r=0;r<s.childNodes.length;r++){if(s.childNodes[r].nodeType==3){t+=s.childNodes[r].nodeValue.length}else{if(s.childNodes[r].nodeName=="BR"){t+=1}else{if(s.childNodes[r].nodeType==1){p.push({event:"start",offset:t,node:s.childNodes[r]});t=arguments.callee(s.childNodes[r],t);p.push({event:"stop",offset:t,node:s.childNodes[r]})}}}}return t})(q,0);return p}function k(y,w,x){var q=0;var z="";var s=[];function u(){if(y.length&&w.length){if(y[0].offset!=w[0].offset){return(y[0].offset<w[0].offset)?y:w}else{return w[0].event=="start"?y:w}}else{return y.length?y:w}}function t(D){var A="<"+D.nodeName.toLowerCase();for(var B=0;B<D.attributes.length;B++){var C=D.attributes[B];A+=" "+C.nodeName.toLowerCase();if(C.value!==undefined&&C.value!==false&&C.value!==null){A+='="'+m(C.value)+'"'}}return A+">"}while(y.length||w.length){var v=u().splice(0,1)[0];z+=m(x.substr(q,v.offset-q));q=v.offset;if(v.event=="start"){z+=t(v.node);s.push(v.node)}else{if(v.event=="stop"){var p,r=s.length;do{r--;p=s[r];z+=("</"+p.nodeName.toLowerCase()+">")}while(p!=v.node);s.splice(r,1);while(r<s.length){z+=t(s[r]);r++}}}}return z+m(x.substr(q))}function j(){function q(x,y,v){if(x.compiled){return}var u;var s=[];if(x.k){x.lR=f(y,x.l||hljs.IR,true);for(var w in x.k){if(!x.k.hasOwnProperty(w)){continue}if(x.k[w] instanceof Object){u=x.k[w]}else{u=x.k;w="keyword"}for(var r in u){if(!u.hasOwnProperty(r)){continue}x.k[r]=[w,u[r]];s.push(r)}}}if(!v){if(x.bWK){x.b="\\b("+s.join("|")+")\\s"}x.bR=f(y,x.b?x.b:"\\B|\\b");if(!x.e&&!x.eW){x.e="\\B|\\b"}if(x.e){x.eR=f(y,x.e)}}if(x.i){x.iR=f(y,x.i)}if(x.r===undefined){x.r=1}if(!x.c){x.c=[]}x.compiled=true;for(var t=0;t<x.c.length;t++){if(x.c[t]=="self"){x.c[t]=x}q(x.c[t],y,false)}if(x.starts){q(x.starts,y,false)}}for(var p in e){if(!e.hasOwnProperty(p)){continue}q(e[p].dM,e[p],true)}}function d(B,C){if(!j.called){j();j.called=true}function q(r,M){for(var L=0;L<M.c.length;L++){if((M.c[L].bR.exec(r)||[null])[0]==r){return M.c[L]}}}function v(L,r){if(D[L].e&&D[L].eR.test(r)){return 1}if(D[L].eW){var M=v(L-1,r);return M?M+1:0}return 0}function w(r,L){return L.i&&L.iR.test(r)}function K(N,O){var M=[];for(var L=0;L<N.c.length;L++){M.push(N.c[L].b)}var r=D.length-1;do{if(D[r].e){M.push(D[r].e)}r--}while(D[r+1].eW);if(N.i){M.push(N.i)}return f(O,M.join("|"),true)}function p(M,L){var N=D[D.length-1];if(!N.t){N.t=K(N,E)}N.t.lastIndex=L;var r=N.t.exec(M);return r?[M.substr(L,r.index-L),r[0],false]:[M.substr(L),"",true]}function z(N,r){var L=E.cI?r[0].toLowerCase():r[0];var M=N.k[L];if(M&&M instanceof Array){return M}return false}function F(L,P){L=m(L);if(!P.k){return L}var r="";var O=0;P.lR.lastIndex=0;var M=P.lR.exec(L);while(M){r+=L.substr(O,M.index-O);var N=z(P,M);if(N){x+=N[1];r+='<span class="'+N[0]+'">'+M[0]+"</span>"}else{r+=M[0]}O=P.lR.lastIndex;M=P.lR.exec(L)}return r+L.substr(O,L.length-O)}function J(L,M){if(M.sL&&e[M.sL]){var r=d(M.sL,L);x+=r.keyword_count;return r.value}else{return F(L,M)}}function I(M,r){var L=M.cN?'<span class="'+M.cN+'">':"";if(M.rB){y+=L;M.buffer=""}else{if(M.eB){y+=m(r)+L;M.buffer=""}else{y+=L;M.buffer=r}}D.push(M);A+=M.r}function G(N,M,Q){var R=D[D.length-1];if(Q){y+=J(R.buffer+N,R);return false}var P=q(M,R);if(P){y+=J(R.buffer+N,R);I(P,M);return P.rB}var L=v(D.length-1,M);if(L){var O=R.cN?"</span>":"";if(R.rE){y+=J(R.buffer+N,R)+O}else{if(R.eE){y+=J(R.buffer+N,R)+O+m(M)}else{y+=J(R.buffer+N+M,R)+O}}while(L>1){O=D[D.length-2].cN?"</span>":"";y+=O;L--;D.length--}var r=D[D.length-1];D.length--;D[D.length-1].buffer="";if(r.starts){I(r.starts,"")}return R.rE}if(w(M,R)){throw"Illegal"}}var E=e[B];var D=[E.dM];var A=0;var x=0;var y="";try{var s,u=0;E.dM.buffer="";do{s=p(C,u);var t=G(s[0],s[1],s[2]);u+=s[0].length;if(!t){u+=s[1].length}}while(!s[2]);if(D.length>1){throw"Illegal"}return{r:A,keyword_count:x,value:y}}catch(H){if(H=="Illegal"){return{r:0,keyword_count:0,value:m(C)}}else{throw H}}}function g(t){var p={keyword_count:0,r:0,value:m(t)};var r=p;for(var q in e){if(!e.hasOwnProperty(q)){continue}var s=d(q,t);s.language=q;if(s.keyword_count+s.r>r.keyword_count+r.r){r=s}if(s.keyword_count+s.r>p.keyword_count+p.r){r=p;p=s}}if(r.language){p.second_best=r}return p}function i(r,q,p){if(q){r=r.replace(/^((<[^>]+>|\t)+)/gm,function(t,w,v,u){return w.replace(/\t/g,q)})}if(p){r=r.replace(/\n/g,"<br>")}return r}function n(t,w,r){var x=h(t,r);var v=a(t);var y,s;if(v){y=d(v,x)}else{return}var q=c(t);if(q.length){s=document.createElement("pre");s.innerHTML=y.value;y.value=k(q,c(s),x)}y.value=i(y.value,w,r);var u=t.className;if(!u.match("(\\s|^)(language-)?"+v+"(\\s|$)")){u=u?(u+" "+v):v}if(/MSIE [678]/.test(navigator.userAgent)&&t.tagName=="CODE"&&t.parentNode.tagName=="PRE"){s=t.parentNode;var p=document.createElement("div");p.innerHTML="<pre><code>"+y.value+"</code></pre>";t=p.firstChild.firstChild;p.firstChild.cN=s.cN;s.parentNode.replaceChild(p.firstChild,s)}else{t.innerHTML=y.value}t.className=u;t.result={language:v,kw:y.keyword_count,re:y.r};if(y.second_best){t.second_best={language:y.second_best.language,kw:y.second_best.keyword_count,re:y.second_best.r}}}function o(){if(o.called){return}o.called=true;var r=document.getElementsByTagName("pre");for(var p=0;p<r.length;p++){var q=b(r[p]);if(q){n(q,hljs.tabReplace)}}}function l(){if(window.addEventListener){window.addEventListener("DOMContentLoaded",o,false);window.addEventListener("load",o,false)}else{if(window.attachEvent){window.attachEvent("onload",o)}else{window.onload=o}}}var e={};this.LANGUAGES=e;this.highlight=d;this.highlightAuto=g;this.fixMarkup=i;this.highlightBlock=n;this.initHighlighting=o;this.initHighlightingOnLoad=l;this.IR="[a-zA-Z][a-zA-Z0-9_]*";this.UIR="[a-zA-Z_][a-zA-Z0-9_]*";this.NR="\\b\\d+(\\.\\d+)?";this.CNR="\\b(0[xX][a-fA-F0-9]+|(\\d+(\\.\\d*)?|\\.\\d+)([eE][-+]?\\d+)?)";this.BNR="\\b(0b[01]+)";this.RSR="!|!=|!==|%|%=|&|&&|&=|\\*|\\*=|\\+|\\+=|,|\\.|-|-=|/|/=|:|;|<|<<|<<=|<=|=|==|===|>|>=|>>|>>=|>>>|>>>=|\\?|\\[|\\{|\\(|\\^|\\^=|\\||\\|=|\\|\\||~";this.ER="(?![\\s\\S])";this.BE={b:"\\\\.",r:0};this.ASM={cN:"string",b:"'",e:"'",i:"\\n",c:[this.BE],r:0};this.QSM={cN:"string",b:'"',e:'"',i:"\\n",c:[this.BE],r:0};this.CLCM={cN:"comment",b:"//",e:"$"};this.CBLCLM={cN:"comment",b:"/\\*",e:"\\*/"};this.HCM={cN:"comment",b:"#",e:"$"};this.NM={cN:"number",b:this.NR,r:0};this.CNM={cN:"number",b:this.CNR,r:0};this.BNM={cN:"number",b:this.BNR,r:0};this.inherit=function(r,s){var p={};for(var q in r){p[q]=r[q]}if(s){for(var q in s){p[q]=s[q]}}return p}}();hljs.LANGUAGES.cpp=function(){var a={keyword:{"false":1,"int":1,"float":1,"while":1,"private":1,"char":1,"catch":1,"export":1,virtual:1,operator:2,sizeof:2,dynamic_cast:2,typedef:2,const_cast:2,"const":1,struct:1,"for":1,static_cast:2,union:1,namespace:1,unsigned:1,"long":1,"throw":1,"volatile":2,"static":1,"protected":1,bool:1,template:1,mutable:1,"if":1,"public":1,friend:2,"do":1,"return":1,"goto":1,auto:1,"void":2,"enum":1,"else":1,"break":1,"new":1,extern:1,using:1,"true":1,"class":1,asm:1,"case":1,typeid:1,"short":1,reinterpret_cast:2,"default":1,"double":1,register:1,explicit:1,signed:1,typename:1,"try":1,"this":1,"switch":1,"continue":1,wchar_t:1,inline:1,"delete":1,alignof:1,char16_t:1,char32_t:1,constexpr:1,decltype:1,noexcept:1,nullptr:1,static_assert:1,thread_local:1,restrict:1,_Bool:1,complex:1},built_in:{std:1,string:1,cin:1,cout:1,cerr:1,clog:1,stringstream:1,istringstream:1,ostringstream:1,auto_ptr:1,deque:1,list:1,queue:1,stack:1,vector:1,map:1,set:1,bitset:1,multiset:1,multimap:1,unordered_set:1,unordered_map:1,unordered_multiset:1,unordered_multimap:1,array:1,shared_ptr:1}};return{dM:{k:a,i:"</",c:[hljs.CLCM,hljs.CBLCLM,hljs.QSM,{cN:"string",b:"'\\\\?.",e:"'",i:"."},{cN:"number",b:"\\b(\\d+(\\.\\d*)?|\\.\\d+)(u|U|l|L|ul|UL|f|F)"},hljs.CNM,{cN:"preprocessor",b:"#",e:"$"},{cN:"stl_container",b:"\\b(deque|list|queue|stack|vector|map|set|bitset|multiset|multimap|unordered_map|unordered_set|unordered_multiset|unordered_multimap|array)\\s*<",e:">",k:a,r:10,c:["self"]}]}}}();hljs.LANGUAGES.r={dM:{c:[hljs.HCM,{cN:"number",b:"\\b0[xX][0-9a-fA-F]+[Li]?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+(?:[eE][+\\-]?\\d*)?L\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+\\.(?!\\d)(?:i\\b)?",e:hljs.IMMEDIATE_RE,r:1},{cN:"number",b:"\\b\\d+(?:\\.\\d*)?(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\.\\d+(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"keyword",b:"(?:tryCatch|library|setGeneric|setGroupGeneric)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\.",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\d+(?![\\w.])",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\b(?:function)",e:hljs.IMMEDIATE_RE,r:2},{cN:"keyword",b:"(?:if|in|break|next|repeat|else|for|return|switch|while|try|stop|warning|require|attach|detach|source|setMethod|setClass)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"literal",b:"(?:NA|NA_integer_|NA_real_|NA_character_|NA_complex_)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"literal",b:"(?:NULL|TRUE|FALSE|T|F|Inf|NaN)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"identifier",b:"[a-zA-Z.][a-zA-Z0-9._]*\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"<\\-(?!\\s*\\d)",e:hljs.IMMEDIATE_RE,r:2},{cN:"operator",b:"\\->|<\\-",e:hljs.IMMEDIATE_RE,r:1},{cN:"operator",b:"%%|~",e:hljs.IMMEDIATE_RE},{cN:"operator",b:">=|<=|==|!=|\\|\\||&&|=|\\+|\\-|\\*|/|\\^|>|<|!|&|\\||\\$|:",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"%",e:"%",i:"\\n",r:1},{cN:"identifier",b:"`",e:"`",r:0},{cN:"string",b:'"',e:'"',c:[hljs.BE],r:0},{cN:"string",b:"'",e:"'",c:[hljs.BE],r:0},{cN:"paren",b:"[[({\\])}]",e:hljs.IMMEDIATE_RE,r:0}]}};
+hljs.initHighlightingOnLoad();
+</script>
+
+<!-- MathJax scripts -->
+<script type="text/javascript" src="https://cdn.bootcss.com/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+<style type="text/css">
+body, td {
+   font-family: sans-serif;
+   background-color: white;
+   font-size: 13px;
+}
+
+body {
+  max-width: 800px;
+  margin: auto;
+  padding: 1em;
+  line-height: 20px;
+}
+
+tt, code, pre {
+   font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace;
+}
+
+h1 {
+   font-size:2.2em;
+}
+
+h2 {
+   font-size:1.8em;
+}
+
+h3 {
+   font-size:1.4em;
+}
+
+h4 {
+   font-size:1.0em;
+}
+
+h5 {
+   font-size:0.9em;
+}
+
+h6 {
+   font-size:0.8em;
+}
+
+a:visited {
+   color: rgb(50%, 0%, 50%);
+}
+
+pre, img {
+  max-width: 100%;
+}
+pre {
+  overflow-x: auto;
+}
+pre code {
+   display: block; padding: 0.5em;
+}
+
+code {
+  font-size: 92%;
+  border: 1px solid #ccc;
+}
+
+code[class] {
+  background-color: #F8F8F8;
+}
+
+table, td, th {
+  border: none;
+}
+
+blockquote {
+   color:#666666;
+   margin:0;
+   padding-left: 1em;
+   border-left: 0.5em #EEE solid;
+}
+
+hr {
+   height: 0px;
+   border-bottom: none;
+   border-top-width: thin;
+   border-top-style: dotted;
+   border-top-color: #999999;
+}
+
+@media print {
+   * {
+      background: transparent !important;
+      color: black !important;
+      filter:none !important;
+      -ms-filter: none !important;
+   }
+
+   body {
+      font-size:12pt;
+      max-width:100%;
+   }
+
+   a, a:visited {
+      text-decoration: underline;
+   }
+
+   hr {
+      visibility: hidden;
+      page-break-before: always;
+   }
+
+   pre, blockquote {
+      padding-right: 1em;
+      page-break-inside: avoid;
+   }
+
+   tr, img {
+      page-break-inside: avoid;
+   }
+
+   img {
+      max-width: 100% !important;
+   }
+
+   @page :left {
+      margin: 15mm 20mm 15mm 10mm;
+   }
+
+   @page :right {
+      margin: 15mm 10mm 15mm 20mm;
+   }
+
+   p, h2, h3 {
+      orphans: 3; widows: 3;
+   }
+
+   h2, h3 {
+      page-break-after: avoid;
+   }
+}
+</style>
+
+
+
+</head>
+
+<body>
+<h2>Ranking the Harmfulness of Severe Weather Events in the U.S.</h2>
+
+<h3>Synopsis</h3>
+
+<p>In this analysis, two questions are to be answered for the United States. The 
+first question is which types of severe weather events are most harmful with 
+respect to public health. The other question is which types of severe weather 
+events have the greatest economic consequences. The data to be analysed is from 
+the U.S. National Oceanic and Atmospheric Administration (NOAA) database and 
+contains the events across the United States from 1950 to 2011. As a result of 
+the data analysis, it has been hypothesized that tornado, excessive heat, heat 
+and flash flood are the most harmful events to the public health. The other 
+hypothesis is that flood, hurricane(typhoon), tornado and storm surge are the most 
+harmful evens to the public wealth.</p>
+
+<h3>Data Processing</h3>
+
+<p>The analysis data can be obtained from the <a href="https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2" title="storm data">storm data</a> in the form of a bzip2
+file. The preparation of the data is explained in the <a href="https://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2Fpd01016005curr.pdf" title="storm data documentation">storm data documentation</a>.
+In addition, there is a document of <a href="https://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2FNCDC%20Storm%20Events-FAQ%20Page.pdf" title="frequently asked questions">frequently asked questions</a> about the 
+data.</p>
+
+<h4>Importing the Raw Data</h4>
+
+<p>The data is stored in a comma separated file and the missing values are 
+represented by blank fields. The storm data is imported. </p>
+
+<pre><code class="r">if (!file.exists(&quot;StormData.csv&quot;)){
+      the_url &lt;- &quot;https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2&quot;
+      download.file(the_url, &quot;StormData.csv.bz2&quot;)
+      the_command &lt;- &quot;bzip2 -d StormData.csv.bz2&quot;
+      system(the_command)
+}
+library(data.table) # load data.table package
+library(dplyr) # load dplyr package
+# read in data treating &quot;&quot; as NA
+data &lt;- fread(&quot;StormData.csv&quot;, data.table = FALSE, na.strings = &quot;&quot;)
+# remove duplicate rows in data
+data &lt;- distinct(data)
+</code></pre>
+
+<h4>Processing the Raw Data</h4>
+
+<p>After the data is imported, the first few and last few lines of the data are 
+displayed.</p>
+
+<pre><code class="r">head(data)
+</code></pre>
+
+<pre><code>##   STATE__           BGN_DATE BGN_TIME TIME_ZONE COUNTY COUNTYNAME STATE
+## 1       1  4/18/1950 0:00:00     0130       CST     97     MOBILE    AL
+## 2       1  4/18/1950 0:00:00     0145       CST      3    BALDWIN    AL
+## 3       1  2/20/1951 0:00:00     1600       CST     57    FAYETTE    AL
+## 4       1   6/8/1951 0:00:00     0900       CST     89    MADISON    AL
+## 5       1 11/15/1951 0:00:00     1500       CST     43    CULLMAN    AL
+## 6       1 11/15/1951 0:00:00     2000       CST     77 LAUDERDALE    AL
+##    EVTYPE BGN_RANGE BGN_AZI BGN_LOCATI END_DATE END_TIME COUNTY_END
+## 1 TORNADO         0    &lt;NA&gt;       &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;          0
+## 2 TORNADO         0    &lt;NA&gt;       &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;          0
+## 3 TORNADO         0    &lt;NA&gt;       &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;          0
+## 4 TORNADO         0    &lt;NA&gt;       &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;          0
+## 5 TORNADO         0    &lt;NA&gt;       &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;          0
+## 6 TORNADO         0    &lt;NA&gt;       &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;          0
+##   COUNTYENDN END_RANGE END_AZI END_LOCATI LENGTH WIDTH F MAG FATALITIES
+## 1         NA         0    &lt;NA&gt;       &lt;NA&gt;   14.0   100 3   0          0
+## 2         NA         0    &lt;NA&gt;       &lt;NA&gt;    2.0   150 2   0          0
+## 3         NA         0    &lt;NA&gt;       &lt;NA&gt;    0.1   123 2   0          0
+## 4         NA         0    &lt;NA&gt;       &lt;NA&gt;    0.0   100 2   0          0
+## 5         NA         0    &lt;NA&gt;       &lt;NA&gt;    0.0   150 2   0          0
+## 6         NA         0    &lt;NA&gt;       &lt;NA&gt;    1.5   177 2   0          0
+##   INJURIES PROPDMG PROPDMGEXP CROPDMG CROPDMGEXP  WFO STATEOFFIC ZONENAMES
+## 1       15    25.0          K       0       &lt;NA&gt; &lt;NA&gt;       &lt;NA&gt;      &lt;NA&gt;
+## 2        0     2.5          K       0       &lt;NA&gt; &lt;NA&gt;       &lt;NA&gt;      &lt;NA&gt;
+## 3        2    25.0          K       0       &lt;NA&gt; &lt;NA&gt;       &lt;NA&gt;      &lt;NA&gt;
+## 4        2     2.5          K       0       &lt;NA&gt; &lt;NA&gt;       &lt;NA&gt;      &lt;NA&gt;
+## 5        2     2.5          K       0       &lt;NA&gt; &lt;NA&gt;       &lt;NA&gt;      &lt;NA&gt;
+## 6        6     2.5          K       0       &lt;NA&gt; &lt;NA&gt;       &lt;NA&gt;      &lt;NA&gt;
+##   LATITUDE LONGITUDE LATITUDE_E LONGITUDE_ REMARKS REFNUM
+## 1     3040      8812       3051       8806    &lt;NA&gt;      1
+## 2     3042      8755          0          0    &lt;NA&gt;      2
+## 3     3340      8742          0          0    &lt;NA&gt;      3
+## 4     3458      8626          0          0    &lt;NA&gt;      4
+## 5     3412      8642          0          0    &lt;NA&gt;      5
+## 6     3450      8748          0          0    &lt;NA&gt;      6
+</code></pre>
+
+<pre><code class="r">tail(data)
+</code></pre>
+
+<pre><code>##        STATE__           BGN_DATE    BGN_TIME TIME_ZONE COUNTY
+## 902292      47 11/28/2011 0:00:00 03:00:00 PM       CST     21
+## 902293      56 11/30/2011 0:00:00 10:30:00 PM       MST      7
+## 902294      30 11/10/2011 0:00:00 02:48:00 PM       MST      9
+## 902295       2  11/8/2011 0:00:00 02:58:00 PM       AKS    213
+## 902296       2  11/9/2011 0:00:00 10:21:00 AM       AKS    202
+## 902297       1 11/28/2011 0:00:00 08:00:00 PM       CST      6
+##                                  COUNTYNAME STATE         EVTYPE BGN_RANGE
+## 902292 TNZ001&gt;004 - 019&gt;021 - 048&gt;055 - 088    TN WINTER WEATHER         0
+## 902293                         WYZ007 - 017    WY      HIGH WIND         0
+## 902294                         MTZ009 - 010    MT      HIGH WIND         0
+## 902295                               AKZ213    AK      HIGH WIND         0
+## 902296                               AKZ202    AK       BLIZZARD         0
+## 902297                               ALZ006    AL     HEAVY SNOW         0
+##        BGN_AZI BGN_LOCATI           END_DATE    END_TIME COUNTY_END
+## 902292    &lt;NA&gt;       &lt;NA&gt; 11/29/2011 0:00:00 12:00:00 PM          0
+## 902293    &lt;NA&gt;       &lt;NA&gt; 11/30/2011 0:00:00 10:30:00 PM          0
+## 902294    &lt;NA&gt;       &lt;NA&gt; 11/10/2011 0:00:00 02:48:00 PM          0
+## 902295    &lt;NA&gt;       &lt;NA&gt;  11/9/2011 0:00:00 01:15:00 PM          0
+## 902296    &lt;NA&gt;       &lt;NA&gt;  11/9/2011 0:00:00 05:00:00 PM          0
+## 902297    &lt;NA&gt;       &lt;NA&gt; 11/29/2011 0:00:00 04:00:00 AM          0
+##        COUNTYENDN END_RANGE END_AZI END_LOCATI LENGTH WIDTH  F MAG
+## 902292         NA         0    &lt;NA&gt;       &lt;NA&gt;      0     0 NA   0
+## 902293         NA         0    &lt;NA&gt;       &lt;NA&gt;      0     0 NA  66
+## 902294         NA         0    &lt;NA&gt;       &lt;NA&gt;      0     0 NA  52
+## 902295         NA         0    &lt;NA&gt;       &lt;NA&gt;      0     0 NA  81
+## 902296         NA         0    &lt;NA&gt;       &lt;NA&gt;      0     0 NA   0
+## 902297         NA         0    &lt;NA&gt;       &lt;NA&gt;      0     0 NA   0
+##        FATALITIES INJURIES PROPDMG PROPDMGEXP CROPDMG CROPDMGEXP WFO
+## 902292          0        0       0          K       0          K MEG
+## 902293          0        0       0          K       0          K RIW
+## 902294          0        0       0          K       0          K TFX
+## 902295          0        0       0          K       0          K AFG
+## 902296          0        0       0          K       0          K AFG
+## 902297          0        0       0          K       0          K HUN
+##                       STATEOFFIC
+## 902292           TENNESSEE, West
+## 902293 WYOMING, Central and West
+## 902294          MONTANA, Central
+## 902295          ALASKA, Northern
+## 902296          ALASKA, Northern
+## 902297            ALABAMA, North
+##                                                                                                                                                            ZONENAMES
+## 902292 LAKE - LAKE - OBION - WEAKLEY - HENRY - DYER - GIBSON - CARROLL - LAUDERDALE - TIPTON - HAYWOOD - CROCKETT - MADISON - CHESTER - HENDERSON - DECATUR - SHELBY
+## 902293                                                                              OWL CREEK &amp; BRIDGER MOUNTAINS - OWL CREEK &amp; BRIDGER MOUNTAINS - WIND RIVER BASIN
+## 902294                                                                                     NORTH ROCKY MOUNTAIN FRONT - NORTH ROCKY MOUNTAIN FRONT - EASTERN GLACIER
+## 902295                                                                                                 ST LAWRENCE IS. BERING STRAIT - ST LAWRENCE IS. BERING STRAIT
+## 902296                                                                                                                 NORTHERN ARCTIC COAST - NORTHERN ARCTIC COAST
+## 902297                                                                                                                                             MADISON - MADISON
+##        LATITUDE LONGITUDE LATITUDE_E LONGITUDE_
+## 902292        0         0          0          0
+## 902293        0         0          0          0
+## 902294        0         0          0          0
+## 902295        0         0          0          0
+## 902296        0         0          0          0
+## 902297        0         0          0          0
+##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        REMARKS
+## 902292                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    EPISODE NARRATIVE: A powerful upper level low pressure system brought snow to portions of Northeast Arkansas, the Missouri Bootheel, West Tennessee and extreme north Mississippi. Most areas picked up between 1 and 3 inches of with areas of Northeast Arkansas and the Missouri Bootheel receiving between 4 and 6 inches of snow.EVENT NARRATIVE: Around 1 inch of snow fell in Carroll County.
+## 902293                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           EPISODE NARRATIVE: A strong cold front moved south through north central Wyoming bringing high wind to the Meeteetse area and along the south slopes of the western Owl Creek Range. Wind gusts to 76 mph were recorded at Madden Reservoir.EVENT NARRATIVE: 
+## 902294                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      EPISODE NARRATIVE: A strong westerly flow aloft produced gusty winds at the surface along the Rocky Mountain front and over the plains of Central Montana. Wind gusts in excess of 60 mph were reported.EVENT NARRATIVE: A wind gust to 60 mph was reported at East Glacier Park 1ENE (the Two Medicine DOT site).
+## 902295 EPISODE NARRATIVE: A 960 mb low over the southern Aleutians at 0300AKST on the 8th intensified to 945 mb near the Gulf of Anadyr by 2100AKST on the 8th. The low crossed the Chukotsk Peninsula as a 956 mb low at 0900AKST on the 9th, and moved into the southern Chukchi Sea as a 958 mb low by 2100AKST on the 9th. The low then tracked to the northwest and weakened to 975 mb about 150 miles north of Wrangel Island by 1500AKST on the 10th. The storm was one of the strongest storms to impact the west coast of Alaska since November 1974. \n\nZone 201: Blizzard conditions were observed at Wainwright from approximately 1153AKST through 1611AKST on the 9th. The visibility was frequently reduced to one quarter mile in snow and blowing snow. There was a peak wind gust to 43kt (50 mph) at the Wainwright ASOS. During this event, there was also a peak wind gust to \n68 kt (78 mph) at the Cape Lisburne AWOS. \n\nZone 202: Blizzard conditions were observed at Barrow from approximately 1021AKST through 1700AKST on the 9th. The visibility was frequently reduced to one quarter mile or less in blowing snow. There was a peak wind gust to 46 kt (53 mph) at the Barrow ASOS. \n\nZone 207: Blizzard conditions were observed at Kivalina from approximately 0400AKST through 1230AKST on the 9th. The visibility was frequently reduced to one quarter of a mile in snow and blowing snow. There was a peak wind gust to 61 kt (70 mph) at the Kivalina ASOS.  The doors to the village transportation shed were blown out to sea.  Many homes lost portions of their tin roofing, and satellite dishes were ripped off of roofs. One home had its door blown off.  At Point Hope, severe blizzard conditions were observed. There was a peak wind gust of 68 kt (78 mph) at the Point Hope AWOS before power was lost to the AWOS. It was estimated that the wind gusted as high as 85 mph in the village during the height of the storm during the morning and early afternoon hours on the 9th. Five power poles were knocked down in the storm EVENT NARRATIVE: 
+## 902296 EPISODE NARRATIVE: A 960 mb low over the southern Aleutians at 0300AKST on the 8th intensified to 945 mb near the Gulf of Anadyr by 2100AKST on the 8th. The low crossed the Chukotsk Peninsula as a 956 mb low at 0900AKST on the 9th, and moved into the southern Chukchi Sea as a 958 mb low by 2100AKST on the 9th. The low then tracked to the northwest and weakened to 975 mb about 150 miles north of Wrangel Island by 1500AKST on the 10th. The storm was one of the strongest storms to impact the west coast of Alaska since November 1974. \n\nZone 201: Blizzard conditions were observed at Wainwright from approximately 1153AKST through 1611AKST on the 9th. The visibility was frequently reduced to one quarter mile in snow and blowing snow. There was a peak wind gust to 43kt (50 mph) at the Wainwright ASOS. During this event, there was also a peak wind gust to \n68 kt (78 mph) at the Cape Lisburne AWOS. \n\nZone 202: Blizzard conditions were observed at Barrow from approximately 1021AKST through 1700AKST on the 9th. The visibility was frequently reduced to one quarter mile or less in blowing snow. There was a peak wind gust to 46 kt (53 mph) at the Barrow ASOS. \n\nZone 207: Blizzard conditions were observed at Kivalina from approximately 0400AKST through 1230AKST on the 9th. The visibility was frequently reduced to one quarter of a mile in snow and blowing snow. There was a peak wind gust to 61 kt (70 mph) at the Kivalina ASOS.  The doors to the village transportation shed were blown out to sea.  Many homes lost portions of their tin roofing, and satellite dishes were ripped off of roofs. One home had its door blown off.  At Point Hope, severe blizzard conditions were observed. There was a peak wind gust of 68 kt (78 mph) at the Point Hope AWOS before power was lost to the AWOS. It was estimated that the wind gusted as high as 85 mph in the village during the height of the storm during the morning and early afternoon hours on the 9th. Five power poles were knocked down in the storm EVENT NARRATIVE: 
+## 902297                           EPISODE NARRATIVE: An intense upper level low developed on the 28th at the base of a highly amplified upper trough across the Great Lakes and Mississippi Valley.  The upper low closed off over the mid South and tracked northeast across the Tennessee Valley during the morning of the 29th.   A warm conveyor belt of heavy rainfall developed in advance of the low which dumped from around 2 to over 5 inches of rain across the eastern two thirds of north Alabama and middle Tennessee.  The highest rain amounts were recorded in Jackson and DeKalb Counties with 3 to 5 inches.  The rain fell over 24 to 36 hour period, with rainfall remaining light to moderate during most its duration.  The rainfall resulted in minor river flooding along the Little River, Big Wills Creek and Paint Rock.   A landslide occurred on Highway 35 just north of Section in Jackson County.  A driver was trapped in his vehicle, but was rescued unharmed.  Trees, boulders and debris blocked 100 to 250 yards of Highway 35.\n\nThe rain mixed with and changed to snow across north Alabama during the afternoon and  evening hours of the 28th, and lasted into the 29th.  The heaviest bursts of snow occurred in northwest Alabama during the afternoon and evening hours, and in north central and northeast Alabama during the overnight and morning hours.  Since ground temperatures were in the 50s, and air temperatures in valley areas only dropped into the mid 30s, most of the snowfall melted on impact with mostly trace amounts reported in valley locations.  However, above 1500 foot elevation, snow accumulations of 1 to 2 inches were reported.  The heaviest amount was 2.3 inches on Monte Sano Mountain, about 5 miles northeast of Huntsville.EVENT NARRATIVE: Snowfall accumulations of up to 2.3 inches were reported on the higher elevations of eastern Madison County.  A snow accumulation of 1.5 inches was reported 2.7 miles south of Gurley, while 2.3 inches was reported 3 miles east of Huntsville atop Monte Sano Mountain.
+##        REFNUM
+## 902292 902292
+## 902293 902293
+## 902294 902294
+## 902295 902295
+## 902296 902296
+## 902297 902297
+</code></pre>
+
+<p>A column of the data contains unusually long entries. It is the REMARKS column 
+to the left of the REFNUM column. The columns that are of interest are EVTYPE, 
+FATALITIES, INJURIES, PROPDMG, PROPDMGEXP, CROPDMG, CROPDMGEXP. EVTYPE is the 
+type of the event. FATALITIES stores the number of the dead people. INJURIES 
+gives the number of injured people. PROPDMG is the base part of the property 
+damage in terms of dollars. PROPDMGEXP is the exponent part of the property 
+damage. CROPDMG and CROPDMGEXP are similar to PROPDMG and PROPDMGEXP with the 
+difference that they are for crop damages. The columns that are related with 
+the analysis are selected and renamed, the rest are discarded.</p>
+
+<pre><code class="r">data &lt;- select(data, STATE = STATE__, COUNTY, EVTYPE, FATALITIES, INJURIES, 
+               PROPDMG, PROPDMGEXP, CROPDMG, CROPDMGEXP)
+</code></pre>
+
+<p>The proportion of NA&#39;s is determined.</p>
+
+<pre><code class="r">prop_na &lt;- function(x){round(mean(is.na(x)), 2)}
+na_table &lt;- sapply(data, prop_na)
+print(na_table)
+</code></pre>
+
+<pre><code>##      STATE     COUNTY     EVTYPE FATALITIES   INJURIES    PROPDMG 
+##       0.00       0.00       0.00       0.00       0.00       0.00 
+## PROPDMGEXP    CROPDMG CROPDMGEXP 
+##       0.52       0.00       0.69
+</code></pre>
+
+<p>The unique values for PROPDMGEXP and CROPDMGEXP are as follows:</p>
+
+<pre><code class="r">print(unique(data$PROPDMGEXP))
+</code></pre>
+
+<pre><code>##  [1] &quot;K&quot; &quot;M&quot; NA  &quot;B&quot; &quot;m&quot; &quot;+&quot; &quot;0&quot; &quot;5&quot; &quot;6&quot; &quot;?&quot; &quot;4&quot; &quot;2&quot; &quot;3&quot; &quot;h&quot; &quot;7&quot; &quot;H&quot; &quot;-&quot;
+## [18] &quot;1&quot; &quot;8&quot;
+</code></pre>
+
+<pre><code class="r">print(unique(data$CROPDMGEXP))
+</code></pre>
+
+<pre><code>## [1] NA  &quot;M&quot; &quot;K&quot; &quot;m&quot; &quot;B&quot; &quot;?&quot; &quot;0&quot; &quot;k&quot; &quot;2&quot;
+</code></pre>
+
+<p>In the storm data preparation manual, it is stated that alphabetical characters 
+are used to indicate the magnitude of the damage. They are &ldquo;K&rdquo; for thousands, &ldquo;M&rdquo; 
+for millions and &ldquo;B&rdquo; for billions. Hence, the characters in the PROPDMGEXP and 
+CROPDMGEXP will be interpreted accordingly. If the exponent character is either 
+of &ldquo;K/k&rdquo; or &ldquo;M/m&rdquo; or &ldquo;B/b&rdquo;, the damage is multiplied by a thousand or a million or 
+a billion, respectively. If the exponent character is a digit, then the magnitude 
+is multiplied by 10 to the power being equal to the digit. For all the other 
+cases, including NA&#39;s, the exponent character has no effect. Hence, the proportions 
+of the NA&#39;s for PROPDMGEXP and CROPDMGEXP are not important. However, this 
+transformation is an approximation to the damage because in the REMARKS column, 
+there are some entries giving the amount of damage depending on reports of various 
+sources. These damage reports in the REMARKS column are neglected. </p>
+
+<p>The approximate total damage is calculated and added as a new column to the data.</p>
+
+<pre><code class="r"># function to convert exponent characters to numeric characters
+exponent &lt;- function(x){
+      if (x %in% c(&quot;K&quot;, &quot;k&quot;)){
+            x = &quot;3&quot;
+      } else if (x %in% c(&quot;M&quot;, &quot;m&quot;)){
+            x = &quot;6&quot;
+      } else if (x %in% c(&quot;B&quot;, &quot;b&quot;)){
+            x = &quot;9&quot;
+      } else if (x %in% c(&quot;+&quot;, &quot;?&quot;, &quot;h&quot;, &quot;H&quot;, &quot;-&quot;)){
+            x = &quot;0&quot;
+      } else if (is.na(x)){
+            x = &quot;0&quot;
+      } else {
+            x = x
+      }
+      x
+}
+# convert property exponent characters to numeric characters
+data$PROPDMGEXP &lt;- sapply(data$PROPDMGEXP, exponent)
+# convert crop exponent characters to numeric characters
+data$CROPDMGEXP &lt;- sapply(data$CROPDMGEXP, exponent)
+data$PROPDMGEXP &lt;- as.numeric(data$PROPDMGEXP)
+data$CROPDMGEXP &lt;- as.numeric(data$CROPDMGEXP)
+data &lt;- data %&gt;%
+      # compute the property damage and crop damage
+      mutate(PROPDMG = PROPDMG * (10 ^ PROPDMGEXP), 
+             CROPDMG = CROPDMG * (10 ^ CROPDMGEXP)) %&gt;%
+      # discard PROPDMGEXP and CROPDMGEXP columns
+      select(STATE, COUNTY, EVTYPE, FATALITIES, INJURIES, 
+             PROPDMG, CROPDMG) %&gt;%
+      as.data.frame()
+# remove extra blanks in the event type names
+data$EVTYPE &lt;- trimws(data$EVTYPE)
+# convert event type names to lower case
+data$EVTYPE &lt;- tolower(data$EVTYPE)
+# get the distinct event type names
+data_ev_types &lt;- unique(data$EVTYPE)
+</code></pre>
+
+<p>Let the number of unique event types be determined.</p>
+
+<pre><code class="r">num_event_types &lt;- length(data_ev_types)
+</code></pre>
+
+<p>The number of distinct event types is 890. That is a huge number. 
+Let the event types given in the storm manual be checked. They are as follows:</p>
+
+<pre><code class="r">default_event_types &lt;- c(&quot;Astronomical Low Tide&quot;, &quot;Avalanche&quot;, &quot;Blizzard&quot;, 
+                         &quot;Coastal Flood&quot;, &quot;Cold/Wind Chill&quot;, &quot;Debris Flow&quot;,
+                         &quot;Dense Fog&quot;, &quot;Dense Smoke&quot;, &quot;Drought&quot;, &quot;Dust Devil&quot;,
+                         &quot;Dust Storm&quot;, &quot;Excessive Heat&quot;, &quot;Extreme Cold/Wind Chill&quot;,
+                         &quot;Flash Flood&quot;, &quot;Flood&quot;, &quot;Frost/Freeze&quot;, &quot;Funnel Cloud&quot;,
+                         &quot;Freezing Fog&quot;, &quot;Hail&quot;, &quot;Heat&quot;, &quot;Heavy Rain&quot;, &quot;Heavy Snow&quot;,
+                         &quot;High Surf&quot;, &quot;High Wind&quot;, &quot;Hurricane (Typhoon)&quot;, &quot;Ice Storm&quot;,
+                         &quot;Lake-Effect Snow&quot;, &quot;Lakeshore Flood&quot;, &quot;Lightning&quot;, 
+                         &quot;Marine Hail&quot;, &quot;Marine High Wind&quot;, &quot;Marine Strong Wind&quot;,
+                         &quot;Marine Thunderstorm Wind&quot;, &quot;Rip Current&quot;, &quot;Seiche&quot;, 
+                         &quot;Sleet&quot;, &quot;Storm Surge/Tide&quot;, &quot;Strong Wind&quot;, 
+                         &quot;Thunderstorm Wind&quot;, &quot;Tornado&quot;, &quot;Tropical Depression&quot;,
+                         &quot;Tropical Storm&quot;, &quot;Tsunami&quot;, &quot;Volcanic Ash&quot;, &quot;Waterspout&quot;,
+                         &quot;Wildfire&quot;, &quot;Winter Storm&quot;, &quot;Winter Weather&quot;)
+print(default_event_types)
+</code></pre>
+
+<pre><code>##  [1] &quot;Astronomical Low Tide&quot;    &quot;Avalanche&quot;               
+##  [3] &quot;Blizzard&quot;                 &quot;Coastal Flood&quot;           
+##  [5] &quot;Cold/Wind Chill&quot;          &quot;Debris Flow&quot;             
+##  [7] &quot;Dense Fog&quot;                &quot;Dense Smoke&quot;             
+##  [9] &quot;Drought&quot;                  &quot;Dust Devil&quot;              
+## [11] &quot;Dust Storm&quot;               &quot;Excessive Heat&quot;          
+## [13] &quot;Extreme Cold/Wind Chill&quot;  &quot;Flash Flood&quot;             
+## [15] &quot;Flood&quot;                    &quot;Frost/Freeze&quot;            
+## [17] &quot;Funnel Cloud&quot;             &quot;Freezing Fog&quot;            
+## [19] &quot;Hail&quot;                     &quot;Heat&quot;                    
+## [21] &quot;Heavy Rain&quot;               &quot;Heavy Snow&quot;              
+## [23] &quot;High Surf&quot;                &quot;High Wind&quot;               
+## [25] &quot;Hurricane (Typhoon)&quot;      &quot;Ice Storm&quot;               
+## [27] &quot;Lake-Effect Snow&quot;         &quot;Lakeshore Flood&quot;         
+## [29] &quot;Lightning&quot;                &quot;Marine Hail&quot;             
+## [31] &quot;Marine High Wind&quot;         &quot;Marine Strong Wind&quot;      
+## [33] &quot;Marine Thunderstorm Wind&quot; &quot;Rip Current&quot;             
+## [35] &quot;Seiche&quot;                   &quot;Sleet&quot;                   
+## [37] &quot;Storm Surge/Tide&quot;         &quot;Strong Wind&quot;             
+## [39] &quot;Thunderstorm Wind&quot;        &quot;Tornado&quot;                 
+## [41] &quot;Tropical Depression&quot;      &quot;Tropical Storm&quot;          
+## [43] &quot;Tsunami&quot;                  &quot;Volcanic Ash&quot;            
+## [45] &quot;Waterspout&quot;               &quot;Wildfire&quot;                
+## [47] &quot;Winter Storm&quot;             &quot;Winter Weather&quot;
+</code></pre>
+
+<p>There are 48 default event types. The number of event
+types in the data set is 890. They are very different from each 
+other. This difference indicates that there are event type names in the data set 
+which are different from the default event type names. Hence, the ranking of the 
+event types will be made according to two data sets. First data set is the original 
+data set. The second data set will be obtained from the original one by processing 
+the event type names in such a way that they are similar to the default event 
+type names. Let the default event types and the event types in the data set be 
+matched.</p>
+
+<pre><code class="r"># default event types are converted to lower case
+default_event_types &lt;- tolower(default_event_types)
+# &quot;/&quot; character and extra blanks are removed from the default event type names
+default_event_types_trimmed &lt;- trimws(gsub(&quot;/&quot;, &quot; &quot;, default_event_types))
+# default event type names are splitted and combined to form the set of default
+# type keywords
+default_keywords &lt;- unique(unlist(strsplit(default_event_types_trimmed, &quot; &quot;,
+                                           fixed = TRUE)))
+# &quot;(&quot; character is removed from the default keywords
+default_keywords &lt;- gsub(&quot;\\(&quot;, &quot;&quot;, default_keywords)
+# &quot;)&quot; character is removed from the default keywords
+default_keywords &lt;- gsub(&quot;\\)&quot;, &quot;&quot;, default_keywords)
+
+# clone the original data set
+data_modif &lt;- data
+
+# remove the &quot;/&quot; character from the event type names
+data_modif$EVTYPE &lt;- gsub(&quot;/&quot;, &quot; &quot;, data_modif$EVTYPE)
+# convert &quot;tstm&quot; to thunderstorm in the event type names
+data_modif$EVTYPE &lt;- gsub(&quot;tstm&quot;, &quot;thunderstorm&quot;, data_modif$EVTYPE)
+# remove the extra blank spaces in the event type names
+data_modif$EVTYPE &lt;- trimws(data_modif$EVTYPE)
+
+# split the event type names into words
+splitted_names &lt;- strsplit(data_modif$EVTYPE, &quot; &quot;)
+
+# take the intersection of the splitted names with the default keywords to 
+# obtain a name more similar to the default type name
+edit_type &lt;- function(x){
+      paste(dplyr::intersect(x, default_keywords), collapse = &quot; &quot;)
+}
+
+# obtain the names similar to the default event type names
+similar_names &lt;- sapply(splitted_names, edit_type)
+# update the event type names
+data_modif$EVTYPE &lt;- similar_names
+</code></pre>
+
+<p>The processing of the raw data has been completed.</p>
+
+<h3>Results</h3>
+
+<p>The processed data is to be analysed to determine which types of severe weather 
+events are most harmful with respect to public health and which types of severe 
+weather events have the greatest economic consequences. The analyses will be 
+performed for the original data set and the data set with the modified event type 
+names.</p>
+
+<h4>Damage to the Public Health</h4>
+
+<p>The effect of the events to the public health is to be determined first. The total 
+number of deaths and injuries will be found and the events will be ordered with 
+respect to death first and injuries second.</p>
+
+<pre><code class="r"># using the original data set, total fatalities and injuries are computed and 
+# data is ordered with respect to decreasing fatalities and injuries
+health &lt;- data %&gt;% group_by(EVTYPE) %&gt;% 
+      summarise(fatalities = sum(FATALITIES), injuries = sum(INJURIES)) %&gt;%
+      arrange(desc(fatalities), desc(injuries)) %&gt;%
+      as.data.frame()
+head(health, n = 10)
+</code></pre>
+
+<pre><code>##            EVTYPE fatalities injuries
+## 1         tornado       5633    91346
+## 2  excessive heat       1903     6525
+## 3     flash flood        978     1777
+## 4            heat        937     2100
+## 5       lightning        816     5230
+## 6       tstm wind        504     6957
+## 7           flood        470     6789
+## 8     rip current        368      232
+## 9       high wind        248     1137
+## 10      avalanche        224      170
+</code></pre>
+
+<p>The data set with the modified event names is also processed to determine the 
+events which are most harmful to the public health.</p>
+
+<pre><code class="r"># using the modified data set, total fatalities and injuries are computed and 
+# data is ordered with respect to decreasing fatalities and injuries
+health &lt;- data_modif %&gt;% group_by(EVTYPE) %&gt;% 
+      summarise(fatalities = sum(FATALITIES), injuries = sum(INJURIES)) %&gt;%
+      arrange(desc(fatalities), desc(injuries)) %&gt;%
+      as.data.frame()
+head(health, n = 10)
+</code></pre>
+
+<pre><code>##               EVTYPE fatalities injuries
+## 1            tornado       5633    91364
+## 2     excessive heat       1920     6525
+## 3               heat       1116     2529
+## 4        flash flood        997     1777
+## 5          lightning        816     5231
+## 6  thunderstorm wind        640     8450
+## 7              flood        473     6791
+## 8        rip current        368      232
+## 9          high wind        255     1158
+## 10         avalanche        224      170
+</code></pre>
+
+<p>From these two results, it is hypothesized that tornado, excessive heat, heat 
+and flash flood are the most harmful events to the public health although the 
+orders of the heat and flash flood are interchanged in the original data set and 
+the modified data set.</p>
+
+<p>The events most harmful to the public health are plotted.</p>
+
+<pre><code class="r">library(ggplot2) # load the package ggplot2
+health &lt;- health[1:10, ] # first ten rows are selected
+# order the bars with respect to decreasing fatalities 
+p &lt;- ggplot(health, aes(x = reorder(EVTYPE, -fatalities), y = fatalities))
+p &lt;- p + geom_bar(stat = &quot;identity&quot;)
+x_label &lt;- &quot;event type&quot; # x axis label
+the_caption &lt;- &quot;Fig.1 Events which are most harmful to the public health&quot;
+p &lt;- p + labs(x = x_label, caption = the_caption)
+# x axis tick labels are made vertical due to space restrictions
+p &lt;- p + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+p
+</code></pre>
+
+<p><img src="data:image/png;base64,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" alt="plot of chunk health_harm_plot"/></p>
+
+<h4>Damage to the Public Wealth</h4>
+
+<p>The damage of the events to the public wealth is to be examined. The total 
+expense of the property and the crop damages will be computed and arranged in a 
+decresing order.</p>
+
+<pre><code class="r"># using the original data set, total wealth damage is computed and 
+# data is ordered with respect to decreasing wealth damage
+wealth &lt;- data %&gt;% group_by(EVTYPE) %&gt;% 
+      summarise(wealth_damage = sum(PROPDMG) + sum(CROPDMG)) %&gt;%
+      arrange(desc(wealth_damage)) %&gt;%
+      as.data.frame()
+head(wealth, n = 10)
+</code></pre>
+
+<pre><code>##               EVTYPE wealth_damage
+## 1              flood  150319678257
+## 2  hurricane/typhoon   71913712800
+## 3            tornado   57362333947
+## 4        storm surge   43323541000
+## 5               hail   18761221491
+## 6        flash flood   18244041079
+## 7            drought   15018672000
+## 8          hurricane   14610229010
+## 9        river flood   10148404500
+## 10         ice storm    8967041360
+</code></pre>
+
+<p>The same examination is to be carried out for the data set with the modified 
+event type names.</p>
+
+<pre><code class="r"># using the modified data set, total wealth damage is computed and 
+# data is ordered with respect to decreasing wealth damage
+wealth &lt;- data_modif %&gt;% group_by(EVTYPE) %&gt;% 
+      summarise(wealth_damage = sum(PROPDMG) + sum(CROPDMG)) %&gt;%
+      arrange(desc(wealth_damage)) %&gt;%
+      as.data.frame()
+head(wealth, n = 10)
+</code></pre>
+
+<pre><code>##               EVTYPE wealth_damage
+## 1              flood  160610286507
+## 2  hurricane typhoon   71913712800
+## 3            tornado   57367112347
+## 4        storm surge   43323541000
+## 5               hail   18783426541
+## 6        flash flood   18519524085
+## 7          hurricane   18247685010
+## 8            drought   15018672000
+## 9          ice storm    8967041360
+## 10 thunderstorm wind    8945660869
+</code></pre>
+
+<p>From these two results, it is hypothesized that flood, hurricane(typhoon), 
+tornado and storm surge are the most harmful evens to the public wealth.</p>
+
+<p>The events most harmful to the public wealth are plotted.</p>
+
+<pre><code class="r">wealth &lt;- wealth[1:10, ] # first ten rows are selected
+# order the bars with respect to decreasing wealth damage
+p &lt;- ggplot(wealth, aes(x = reorder(EVTYPE, -wealth_damage), y = wealth_damage))
+p &lt;- p + geom_bar(stat = &quot;identity&quot;)
+x_label &lt;- &quot;event type&quot; # x axis label
+y_label &lt;- &quot;wealth damage&quot; # y axis label
+the_caption &lt;- &quot;Fig.2 Events which are most harmful to the public wealth&quot;
+p &lt;- p + labs(x = x_label, y = y_label, caption = the_caption)
+# x axis tick labels are made vertical due to space restrictions
+p &lt;- p + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+p
+</code></pre>
+
+<p><img src="data:image/png;base64,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" alt="plot of chunk wealth_harm_plot"/></p>
+
+</body>
+
+</html>
